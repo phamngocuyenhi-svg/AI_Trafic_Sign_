@@ -150,7 +150,7 @@ if __name__ == "__main__":
     
     if not os.path.exists(raw_dir):
         print(f"Lỗi: Thư mục dữ liệu gốc {raw_dir} không tồn tại!")
-        print("Vui lòng chạy mock_data_generator.py trước.")
+        print("Vui lòng chạy script download_data.py trước.")
         sys.exit(1)
         
     clean_dataset(raw_dir, cleaned_dir)

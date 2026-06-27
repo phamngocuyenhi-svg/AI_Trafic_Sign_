@@ -27,13 +27,8 @@ def main():
     # Kiểm tra sự tồn tại của dữ liệu gốc
     if not os.path.exists(raw_dir) or not os.listdir(raw_dir):
         print(f"Lỗi: Thư mục dữ liệu gốc trống hoặc không tồn tại: {raw_dir}")
-        print("Đang tự động chạy mock_data_generator.py để sinh dữ liệu giả lập...")
-        try:
-            import mock_data_generator
-            mock_data_generator.main()
-        except ImportError:
-            print("Lỗi: Không tìm thấy mock_data_generator.py!")
-            sys.exit(1)
+        print("Vui lòng chạy script download_data.py để tải dữ liệu trước.")
+        sys.exit(1)
             
     # Bước 1: Làm sạch dữ liệu
     step1_start = time.time()

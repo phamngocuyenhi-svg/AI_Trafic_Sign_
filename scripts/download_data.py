@@ -3,12 +3,16 @@ import urllib.request
 import zipfile
 import argparse
 
-# URL chính thức của bộ dữ liệu GTSRB
-GTSRB_TRAIN_URL = "https://sid.erda.dk/public/archives/da4667553b3afc9641203b57e1b991f4/GTSRB_Final_Training_Images.zip"
-GTSRB_TEST_URL = "https://sid.erda.dk/public/archives/da4667553b3afc9641203b57e1b991f4/GTSRB_Final_Test_Images.zip"
+# --- CÁC LINK TẢI TRỰC TIẾP KHÔNG CẦN TÀI KHOẢN (VĨNH VIỄN) ---
 
-# URL của BTSC (mẫu hoặc toàn bộ)
-BTSC_URL = "https://bcs.fit.vutbr.cz/data/ref-app.zip" # Bản đồ/bộ mẫu từ ĐH Brno
+# GTSRB (German Traffic Sign Recognition Benchmark)
+# Host chính thức từ sid.erda.dk (Mirror chuẩn nhất)
+GTSRB_TRAIN_URL = "https://sid.erda.dk/public/archives/da4667553b3afc9641203b57e1b991f4/GTSRB_Final_Training_Images.zip"
+
+# BTSC (Belgium Traffic Sign Classification)
+# Host từ Đại học ETH Zurich
+BTSC_URL = "http://btsd.ethz.ch/shareddata/BelgiumTSC/BelgiumTSC_Training.zip"
+
 
 def download_progress(block_num, block_size, total_size):
     """
@@ -16,11 +20,13 @@ def download_progress(block_num, block_size, total_size):
     """
     downloaded = block_num * block_size
     percent = min(100, (downloaded / total_size) * 100) if total_size > 0 else 0
+    
+    # In trên cùng một dòng (sử dụng \r)
     print(f"\rTải dữ liệu: {percent:.2f}% ({downloaded // (1024*1024)}MB / {total_size // (1024*1024)}MB)", end="")
 
 def download_and_extract(url, output_dir):
     """
-    Tải file zip từ URL và giải nén vào thư mục đích.
+    Tải file zip từ URL (có vượt tường lửa chống bot) và giải nén.
     """
     os.makedirs(output_dir, exist_ok=True)
     filename = url.split('/')[-1]
@@ -29,7 +35,26 @@ def download_and_extract(url, output_dir):
     if not os.path.exists(zip_path):
         print(f"\nBắt đầu tải từ: {url}")
         try:
-            urllib.request.urlretrieve(url, zip_path, download_progress)
+            # Thêm User-Agent để không bị server (đặc biệt là sid.erda.dk) chặn 403 Forbidden
+            req = urllib.request.Request(
+                url, 
+                headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+            )
+            
+            with urllib.request.urlopen(req) as response, open(zip_path, 'wb') as out_file:
+                total_length = int(response.info().get('Content-Length', 0))
+                downloaded = 0
+                block_size = 8192
+                
+                while True:
+                    buffer = response.read(block_size)
+                    if not buffer:
+                        break
+                    downloaded += len(buffer)
+                    out_file.write(buffer)
+                    # Gọi hàm cập nhật UI
+                    download_progress(downloaded // block_size, block_size, total_length)
+                    
             print(f"\nTải xuống thành công! Lưu tại: {zip_path}")
         except Exception as e:
             print(f"\nLỗi khi tải từ {url}: {e}")
@@ -48,9 +73,9 @@ def download_and_extract(url, output_dir):
         return False
 
 def main():
-    parser = argparse.ArgumentParser(description="Script tải dữ liệu biển báo giao thông GTSRB và BTSC.")
+    parser = argparse.ArgumentParser(description="Script tải dữ liệu biển báo giao thông GTSRB và BTSC (Link Direct).")
     parser.add_argument("--gtsrb", action="store_true", help="Tải bộ dữ liệu huấn luyện GTSRB (~263MB)")
-    parser.add_argument("--btsc", action="store_true", help="Tải bộ dữ liệu BTSC mẫu")
+    parser.add_argument("--btsc", action="store_true", help="Tải bộ dữ liệu BTSC (~170MB)")
     parser.add_argument("--all", action="store_true", help="Tải toàn bộ tất cả các bộ dữ liệu")
     args = parser.parse_args()
 
@@ -60,9 +85,8 @@ def main():
     if not (args.gtsrb or args.btsc or args.all):
         print("Vui lòng chỉ định bộ dữ liệu muốn tải.")
         print("Ví dụ:")
-        print("  python download_data.py --gtsrb     (để tải GTSRB)")
-        print("  python download_data.py --all       (để tải toàn bộ)")
-        print("Hoặc bạn có thể chạy mock_data_generator.py để sinh dữ liệu giả lập ngay lập tức.")
+        print("  python scripts/download_data.py --gtsrb     (để tải GTSRB)")
+        print("  python scripts/download_data.py --all       (để tải toàn bộ)")
         return
 
     if args.gtsrb or args.all:
