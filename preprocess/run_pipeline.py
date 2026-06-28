@@ -15,10 +15,10 @@ def main():
     start_time = time.time()
     
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    raw_dir = os.path.join(base_dir, "data", "raw")
-    cleaned_dir = os.path.join(base_dir, "data", "cleaned")
-    balanced_dir = os.path.join(base_dir, "data", "balanced")
-    split_dir = os.path.join(base_dir, "data", "split")
+    raw_dir = os.path.join(base_dir, "data", "data_raw")
+    cleaned_dir = os.path.join(base_dir, "data", "data_clean")
+    balanced_dir = os.path.join(base_dir, "data", "data_quantity_balance")
+    split_dir = os.path.join(base_dir, "data", "data_split")
     
     print("="*60)
     print("KHỞI CHẠY PIPELINE TIỀN XỬ LÝ DỮ LIỆU BIỂN BÁO GIAO THÔNG")

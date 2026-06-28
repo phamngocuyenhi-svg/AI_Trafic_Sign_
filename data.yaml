@@ -1,6 +1,6 @@
-train: ./data/split/train
-val: ./data/split/val
-test: ./data/split/test
+train: ./data/data_split/train
+val: ./data/data_split/val
+test: ./data/data_split/test
 nc: 7
 names:
   0: class_0

@@ -80,13 +80,13 @@ def main():
     args = parser.parse_args()
 
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    raw_dir = os.path.join(base_dir, "data", "raw")
+    raw_dir = os.path.join(base_dir, "data", "data_raw")
 
     if not (args.gtsrb or args.btsc or args.all):
         print("Vui lòng chỉ định bộ dữ liệu muốn tải.")
         print("Ví dụ:")
-        print("  python scripts/download_data.py --gtsrb     (để tải GTSRB)")
-        print("  python scripts/download_data.py --all       (để tải toàn bộ)")
+        print("  python preprocess/download_data.py --gtsrb     (để tải GTSRB)")
+        print("  python preprocess/download_data.py --all       (để tải toàn bộ)")
         return
 
     if args.gtsrb or args.all:
