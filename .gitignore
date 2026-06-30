@@ -1,0 +1,29 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.cache/
+.venv/
+venv/
+env/
+
+# Data and generated artifacts
+data/
+runs/
+outputs/
+logs/
+datasets/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.tflite
+
+# Notebook noise
+.ipynb_checkpoints/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
